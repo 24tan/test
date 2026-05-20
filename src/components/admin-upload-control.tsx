@@ -1,6 +1,14 @@
 "use client";
 
+import { upload } from "@vercel/blob/client";
 import { ChangeEvent, useRef, useState } from "react";
+import {
+  errorMessage,
+  mediaKind,
+  mediaLimit,
+  mediaLimitMessage,
+  safeUploadPathname,
+} from "@/lib/upload-utils";
 
 type AdminUploadControlProps = {
   accept: string;
@@ -23,6 +31,31 @@ export function AdminUploadControl({
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState("");
 
+  async function uploadFile(file: File) {
+    const type = mediaKind(file.name, file.type);
+
+    if (!type) {
+      throw new Error(`${file.name} 不是支持的图片、视频或资料文件格式。`);
+    }
+
+    if (file.size > mediaLimit(type)) {
+      throw new Error(mediaLimitMessage(file.name, type));
+    }
+
+    const blob = await upload(safeUploadPathname(file.name), file, {
+      access: "public",
+      handleUploadUrl: "/api/uploads",
+      multipart: true,
+      contentType: file.type || undefined,
+      headers: {
+        "x-admin-username": adminUsername,
+        "x-admin-password": adminPassword,
+      },
+    });
+
+    return blob.url;
+  }
+
   async function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
 
@@ -30,35 +63,21 @@ export function AdminUploadControl({
       return;
     }
 
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
     setIsUploading(true);
     setMessage("上传中...");
 
     try {
-      const response = await fetch("/api/uploads", {
-        method: "POST",
-        headers: {
-          "x-admin-username": adminUsername,
-          "x-admin-password": adminPassword,
-        },
-        body: formData,
-      });
-      const data = (await response.json()) as {
-        uploaded?: Array<{ url: string }>;
-        error?: string;
-      };
+      const urls = [];
 
-      if (!response.ok || !data.uploaded) {
-        setMessage(data.error ?? "上传失败");
-        return;
+      for (const file of files) {
+        const url = await uploadFile(file);
+        urls.push(url);
       }
 
-      const urls = data.uploaded.map((item) => item.url);
       onUploaded(urls);
       setMessage(`已上传 ${urls.length} 个文件`);
-    } catch {
-      setMessage("上传失败");
+    } catch (error) {
+      setMessage(`上传失败：${errorMessage(error)}`);
     } finally {
       setIsUploading(false);
       event.target.value = "";

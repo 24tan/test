@@ -1,6 +1,14 @@
 "use client";
 
+import { upload } from "@vercel/blob/client";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  errorMessage,
+  mediaKind,
+  mediaLimit,
+  mediaLimitMessage,
+  safeUploadPathname,
+} from "@/lib/upload-utils";
 
 type UploadedMedia = {
   name: string;
@@ -61,6 +69,37 @@ export function UploadPanel({ adminUsername, adminPassword }: UploadPanelProps) 
     });
   }, [adminPassword, adminUsername]);
 
+  async function uploadFile(file: File) {
+    const type = mediaKind(file.name, file.type);
+
+    if (!type) {
+      throw new Error(`${file.name} 不是支持的图片、视频或资料文件格式。`);
+    }
+
+    if (file.size > mediaLimit(type)) {
+      throw new Error(mediaLimitMessage(file.name, type));
+    }
+
+    const blob = await upload(safeUploadPathname(file.name), file, {
+      access: "public",
+      handleUploadUrl: "/api/uploads",
+      multipart: true,
+      contentType: file.type || undefined,
+      headers: {
+        "x-admin-username": adminUsername,
+        "x-admin-password": adminPassword,
+      },
+    });
+
+    return {
+      name: file.name,
+      originalName: file.name,
+      url: blob.url,
+      type,
+      size: file.size,
+    } satisfies UploadedMedia;
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -69,37 +108,22 @@ export function UploadPanel({ adminUsername, adminPassword }: UploadPanelProps) 
       return;
     }
 
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
     setIsUploading(true);
     setStatus("正在上传...");
 
     try {
-      const response = await fetch("/api/uploads", {
-        method: "POST",
-        headers: {
-          "x-admin-username": adminUsername,
-          "x-admin-password": adminPassword,
-        },
-        body: formData,
-      });
-      const data = (await response.json()) as {
-        uploaded?: UploadedMedia[];
-        error?: string;
-      };
+      const uploaded = [];
 
-      if (!response.ok) {
-        setStatus(data.error ?? "上传失败。");
-        return;
+      for (const file of files) {
+        setStatus(`正在上传：${file.name}`);
+        uploaded.push(await uploadFile(file));
       }
 
       setFiles([]);
-      setStatus(
-        `上传成功：${data.uploaded?.map((item) => item.url).join(" / ") ?? ""}`,
-      );
+      setStatus(`上传成功：${uploaded.map((item) => item.url).join(" / ")}`);
       await loadMedia();
-    } catch {
-      setStatus("上传失败，请检查文件大小或稍后重试。");
+    } catch (error) {
+      setStatus(`上传失败：${errorMessage(error)}`);
     } finally {
       setIsUploading(false);
     }
