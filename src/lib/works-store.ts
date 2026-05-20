@@ -1,8 +1,10 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { categories, works as defaultWorks, type Work, type WorkCategory } from "@/data/works";
+import { assertRedis, getRedis, parseRedisJson } from "@/lib/redis";
 
 const worksFile = path.join(process.cwd(), "content", "works.json");
+const worksKey = "works:all";
 
 function isCategory(value: string): value is WorkCategory {
   return categories.some((category) => category === value);
@@ -91,6 +93,20 @@ async function readWorksFile() {
 }
 
 export async function getAllWorks() {
+  const redis = getRedis();
+
+  if (redis) {
+    try {
+      const stored = parseRedisJson<Work[]>(await redis.get(worksKey));
+
+      if (Array.isArray(stored)) {
+        return stored.map((work) => normalizeWork(work, work.slug));
+      }
+    } catch (error) {
+      console.warn("Failed to read works from Redis:", error);
+    }
+  }
+
   return readWorksFile();
 }
 
@@ -100,8 +116,8 @@ export async function getWorkBySlug(slug: string) {
 }
 
 export async function saveAllWorks(works: Work[]) {
-  await fs.mkdir(path.dirname(worksFile), { recursive: true });
-  await fs.writeFile(worksFile, `${JSON.stringify(works, null, 2)}\n`, "utf-8");
+  const normalizedWorks = works.map((work) => normalizeWork(work, work.slug));
+  await assertRedis().set(worksKey, normalizedWorks);
 }
 
 export async function upsertWork(input: Partial<Work>, originalSlug?: string) {

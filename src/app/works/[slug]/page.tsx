@@ -10,6 +10,7 @@ type WorkDetailPageProps = {
 };
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   const works = await getAllWorks();

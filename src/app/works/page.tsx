@@ -4,6 +4,9 @@ import { categories, type WorkCategory } from "@/data/works";
 import { getSiteSettings } from "@/lib/site-store";
 import { getAllWorks } from "@/lib/works-store";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type WorksPageProps = {
   searchParams?: Promise<{
     category?: string;

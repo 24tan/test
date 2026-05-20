@@ -6,8 +6,10 @@ import {
   type ResourceLink,
   type SiteSettings,
 } from "@/data/site";
+import { assertRedis, getRedis, parseRedisJson } from "@/lib/redis";
 
 const settingsFile = path.join(process.cwd(), "content", "site.json");
+const siteSettingsKey = "site:settings";
 
 function text(value: unknown, fallback: string) {
   const normalized = String(value ?? "").trim();
@@ -174,6 +176,22 @@ export function normalizeSiteSettings(input: Partial<SiteSettings>): SiteSetting
 }
 
 export async function getSiteSettings() {
+  const redis = getRedis();
+
+  if (redis) {
+    try {
+      const stored = parseRedisJson<Partial<SiteSettings>>(
+        await redis.get(siteSettingsKey),
+      );
+
+      if (stored) {
+        return normalizeSiteSettings(stored);
+      }
+    } catch (error) {
+      console.warn("Failed to read site settings from Redis:", error);
+    }
+  }
+
   try {
     const raw = await fs.readFile(settingsFile, "utf-8");
     return normalizeSiteSettings(JSON.parse(raw) as Partial<SiteSettings>);
@@ -190,7 +208,6 @@ export async function getSiteSettings() {
 
 export async function saveSiteSettings(input: Partial<SiteSettings>) {
   const settings = normalizeSiteSettings(input);
-  await fs.mkdir(path.dirname(settingsFile), { recursive: true });
-  await fs.writeFile(settingsFile, `${JSON.stringify(settings, null, 2)}\n`, "utf-8");
+  await assertRedis().set(siteSettingsKey, settings);
   return settings;
 }

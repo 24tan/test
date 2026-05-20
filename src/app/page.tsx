@@ -3,6 +3,7 @@ import { getSiteSettings } from "@/lib/site-store";
 import { getAllWorks } from "@/lib/works-store";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 function isVideoMedia(url: string, type: "image" | "video") {
   return type === "video" || /\.(mp4|webm|mov|m4v)$/i.test(url);
