@@ -6,7 +6,6 @@ export async function Header() {
   const navItems = [
     { href: "/", label: settings.navHomeLabel },
     { href: "/works", label: settings.navWorksLabel },
-    { href: "/admin", label: settings.navAdminLabel },
   ];
 
   return (
