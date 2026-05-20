@@ -1,0 +1,80 @@
+{
+  "brandName": "AI猿创意",
+  "siteRole": "AI博主",
+  "metadataTitle": "AI猿创意 | AI博主",
+  "metadataDescription": "高级、干净、电影感的 AI 漫剧博主个人主页，展示漫剧企划、角色设定、分镜与短视频作品。",
+  "navHomeLabel": "首页",
+  "navWorksLabel": "作品",
+  "navAdminLabel": "后台",
+  "heroEyebrow": "AI Creative Director / Product Design / AI Video",
+  "heroDescription": "用AI影像，打造属于你的视觉世界",
+  "heroMediaUrl": "/uploads/media-f6165d70.mp4",
+  "heroMediaType": "video",
+  "primaryCta": "浏览漫剧作品",
+  "contactCta": "合作联系：guishangdao",
+  "aboutEyebrow": "About",
+  "aboutTitle": "把 AI 漫剧做成可连续更新的内容系列",
+  "aboutParagraphs": [
+    "这个主页首版使用占位内容，适合之后替换成你的真实账号名、头像、漫剧截图、角色图、分镜图和视频链接。当前结构优先服务作品浏览，也能承载合作介绍和幕后拆解。",
+    "视觉方向延续深色电影感：大图建立账号气质，卡片承载不同漫剧项目，详情页负责展开每个企划的背景、过程、图片和视频入口。"
+  ],
+  "capabilitiesEyebrow": "Capabilities",
+  "capabilitiesTitle": "能力方向",
+  "capabilities": [
+    {
+      "title": "AI 漫剧企划",
+      "description": "把故事概念整理成角色、世界观、集数节奏和可发布的视觉包装。"
+    },
+    {
+      "title": "角色与分镜",
+      "description": "用角色设定、场景氛围和分镜节奏建立稳定的漫剧视觉语言。"
+    },
+    {
+      "title": "短视频发布",
+      "description": "为抖音、B 站、小红书等平台准备封面、预告和幕后拆解内容。"
+    }
+  ],
+  "selectedEyebrow": "Selected works",
+  "selectedTitle": "AI动画项目",
+  "viewAllText": "查看全部作品",
+  "processEyebrow": "Process",
+  "processTitle": "工作方式",
+  "processSteps": [
+    "故事企划",
+    "角色定调",
+    "分镜成片",
+    "发布包装"
+  ],
+  "resourcesEyebrow": "Resources",
+  "resourcesTitle": "公开资料",
+  "resourcesDescription": "这里可以放你的个人介绍、合作说明、作品集文件、公开视频资料或其他可公开下载的内容。",
+  "resources": [
+    {
+      "title": "个人介绍",
+      "description": "适合放一份账号介绍、创作方向或合作简介。",
+      "url": "#"
+    },
+    {
+      "title": "合作说明",
+      "description": "用于说明可合作的内容类型、交付方式和联系方式。",
+      "url": "#"
+    }
+  ],
+  "categoryTitle": "分类浏览",
+  "contactEyebrow": "Contact",
+  "contactTitle": "业务合作欢迎联系",
+  "contactDescription": "AIGC创意总监|资深体验设计师\n专注于研究AI技术在动画制作领域的实际应用\n所有视频均为原创，需求🉑联系",
+  "contactEmail": "微信：guishangdao",
+  "footerLeft": "AI猿创意 / AIGC视觉叙事创作者",
+  "footerRight": "AI comic-drama, storyboard and short video works.",
+  "worksArchiveEyebrow": "Works archive",
+  "worksArchiveTitle": "动画展示",
+  "worksArchiveDescription": "汇集 AI 漫剧企划、角色设定、场景设定、分镜制作、短视频包装和海报视觉。每个作品都可以继续替换为真实内容。",
+  "detailBackText": "返回作品档案",
+  "detailVideoText": "打开视频链接",
+  "detailNotesEyebrow": "Creative notes",
+  "detailNotesTitle": "创作说明",
+  "detailGalleryEyebrow": "Visuals",
+  "detailGalleryTitle": "作品画面",
+  "detailImageLabel": "Image"
+}
